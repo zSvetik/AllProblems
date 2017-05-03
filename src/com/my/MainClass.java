@@ -1,7 +1,6 @@
 package com.my;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.stream.*;
 
 public class MainClass {
@@ -13,12 +12,31 @@ public class MainClass {
 
 		// System.out.println(problem3(new Long("600851475143")));
 
-		// System.out.println(problem3(new Long("600851475143")));
+		// System.out.println(problem10());
 
 		problem9();
 
 		System.out.println((System.currentTimeMillis() - startTime) + " ms.");
 
+	}
+
+	/**
+	 * 
+	 * Problem 10: Summation of primes. The sum of the primes below 10 is 2 + 3
+	 * + 5 + 7 = 17.
+	 * 
+	 * Find the sum of all the primes below two million.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @return
+	 * 
+	 */
+
+	private static Long problem10() {
+		return LongStream.rangeClosed(2, 20000).parallel().filter(i -> LongStream.range(2, i).allMatch(n -> i % n != 0))
+				.sum();
 	}
 
 	/**
@@ -40,12 +58,11 @@ public class MainClass {
 
 	private static void problem9() {
 		int maxInt = 500;
-		IntStream.rangeClosed(0, maxInt)
+		IntStream.rangeClosed(0, maxInt).parallel()
 				.flatMap(a -> IntStream.rangeClosed(a + 1, maxInt).flatMap(b -> IntStream.rangeClosed(b + 1, maxInt)
 						.flatMap(c -> Stream.of(a, b, c).mapToInt(Integer::valueOf).filter(
 								p -> (Math.pow(a, 2) + Math.pow(b, 2) == Math.pow(c, 2)) && (a + b + c == 1000)))))
 				.forEach(System.out::println);
-
 	}
 
 	/**
@@ -80,7 +97,6 @@ public class MainClass {
 				.flatMap(Arrays::stream).mapToLong(n -> n.chars().mapToObj(i -> String.valueOf((char) i))
 						.mapToLong(Long::valueOf).reduce((a, b) -> a * b).getAsLong())
 				.max().getAsLong();
-
 	}
 
 	/**
@@ -100,11 +116,8 @@ public class MainClass {
 	 */
 
 	private static long problem7() {
-
 		return LongStream.iterate(2, n -> n + 1).filter(n -> LongStream.range(2, n).noneMatch(i -> n % i == 0)).limit(5)
-
 				.reduce((a, b) -> b).getAsLong();
-
 	}
 
 	/**
@@ -144,17 +157,9 @@ public class MainClass {
 	 */
 
 	private static long problem6() {
-
 		Long endNumber = new Long("100");
-
-		return LongStream
-
-				.of((long) Math.pow(LongStream.rangeClosed(1, endNumber).parallel().reduce((a, b) -> a + b).getAsLong(),
-
-						2), LongStream.rangeClosed(1, endNumber).map(n -> n * n).sum())
-
-				.reduce((a, b) -> a - b).getAsLong();
-
+		return LongStream.of((long) Math.pow(LongStream.rangeClosed(1, endNumber).parallel().sum(), 2),
+				LongStream.rangeClosed(1, endNumber).map(n -> n * n).sum()).reduce((a, b) -> a - b).getAsLong();
 	}
 
 	/**
@@ -176,11 +181,8 @@ public class MainClass {
 	 */
 
 	private static Long problem5() {
-
 		return LongStream.iterate(1, n -> n + 1).filter(n -> IntStream.rangeClosed(1, 20).allMatch(i -> n % i == 0))
-
 				.findFirst().getAsLong();
-
 	}
 
 	/**
@@ -202,29 +204,17 @@ public class MainClass {
 	 */
 
 	private static int problem4() {
-
 		return IntStream.range(100, 1000).parallel()
-
 				.map(i -> IntStream.range(100, 1000).parallel().map(n -> n * i).filter(n -> {
-
 					int inNum = n;
-
 					int outNum = 0;
-
 					while (inNum != 0) {
-
 						outNum *= 10;
-
 						outNum += (inNum % 10);
-
 						inNum /= 10;
-
 					}
-
 					return n == outNum;
-
 				}).max().orElse(0)).max().orElse(0);
-
 	}
 
 	/**
@@ -246,11 +236,8 @@ public class MainClass {
 	 */
 
 	private static Long problem3(Long inputNumber) {
-
 		return LongStream.rangeClosed(1, inputNumber).parallel().filter(i -> inputNumber % i == 0)
-
 				.filter(n -> LongStream.range(2, n).allMatch(i -> n % i != 0)).max().getAsLong();
-
 	}
 
 	/**
@@ -278,35 +265,31 @@ public class MainClass {
 	 */
 
 	private static long problem2() {
-
 		return Stream.iterate(new long[] { 1, 1 }, p -> new long[] { p[1], p[0] + p[1] }).limit(33)
-
 				.filter(p -> p[0] % 2 == 0).mapToLong(p -> p[0]).sum();
-
 	}
 
-/**
- * 
- * Problem 1: Multiples of 3 and 5. If we list all the natural numbers below
- * 
- * 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these
- * 
- * multiples is 23.
- * 
- * 
- * 
- * Find the sum of all the multiples of 3 or 5 below 1000.
- * 
- * 
- * 
- * @param belowNumber
- * 
- * @return
- * 
- */
+	/**
+	 * 
+	 * Problem 1: Multiples of 3 and 5. If we list all the natural numbers below
+	 * 
+	 * 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these
+	 * 
+	 * multiples is 23.
+	 * 
+	 * 
+	 * 
+	 * Find the sum of all the multiples of 3 or 5 below 1000.
+	 * 
+	 * 
+	 * 
+	 * @param belowNumber
+	 * 
+	 * @return
+	 * 
+	 */
 
-private static int problem1(int belowNumber) {
-
-    return IntStream.range(1, belowNumber).filter(i -> (i % 3 == 0) || (i % 5 == 0)).sum();
-
+	private static int problem1(int belowNumber) {
+		return IntStream.range(1, belowNumber).filter(i -> (i % 3 == 0) || (i % 5 == 0)).sum();
+	}
 }
